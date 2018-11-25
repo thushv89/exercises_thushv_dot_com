@@ -22,7 +22,9 @@ RUN apt-get update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir jupyter numpy pandas matplotlib tensorflow
+RUN pip3 install --no-cache-dir jupyter \
+	numpy pandas matplotlib tensorflow \
+	scikit-learn scipy
 
 # Configure environment
 ENV SHELL=/bin/bash  
