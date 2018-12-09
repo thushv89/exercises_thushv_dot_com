@@ -4,6 +4,7 @@ LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
 ARG NB_USER="testuser"
 ARG NB_UID="1000"
 ARG NB_GID="100"
+ARG GPU_SUPPORT="0"
 
 USER root
 
@@ -16,6 +17,7 @@ RUN apt-get update \
     wget \
     ca-certificates \
     sudo \
+	vim-tiny \
 	python3-dev \
 	python3-pip \   
 	python3-setuptools \
@@ -23,8 +25,13 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir jupyter \
-	numpy pandas matplotlib tensorflow \
+	numpy pandas matplotlib \
 	scikit-learn scipy
+
+# Instaling tensorflow cpu or gpu depending on user argument
+ADD tensorflow.sh /usr/local/bin/tensorflow.sh
+RUN chgrp $NB_GID /usr/local/bin/tensorflow.sh && chmod g+rwX /usr/local/bin/tensorflow.sh
+RUN tensorflow.sh $GPU_SUPPORT
 
 # Configure environment
 ENV SHELL=/bin/bash  
@@ -39,7 +46,7 @@ ENV HOME=/home/$NB_USER
 RUN groupadd wheel -g 11 && \
 	groupmod users -g $NB_GID && \
     echo "auth required pam_wheel.so use_uid" >> /etc/pam.d/su && \
-    useradd -m -s /bin/bash -N -u $NB_UID -g $NB_GID $NB_USER && \
+    useradd -m -l -s /bin/bash -N -u $NB_UID -g $NB_GID $NB_USER && \
     chmod g+w /etc/passwd && \
 	chgrp $NB_GID $HOME && chmod g+rwX $HOME
 
