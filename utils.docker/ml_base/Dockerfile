@@ -28,11 +28,6 @@ RUN pip3 install --no-cache-dir jupyter \
 	numpy pandas matplotlib \
 	scikit-learn scipy
 
-# Instaling tensorflow cpu or gpu depending on user argument
-ADD tensorflow.sh /usr/local/bin/tensorflow.sh
-RUN chgrp $NB_GID /usr/local/bin/tensorflow.sh && chmod g+rwX /usr/local/bin/tensorflow.sh
-RUN tensorflow.sh $GPU_SUPPORT
-
 # Configure environment
 ENV SHELL=/bin/bash  
 ENV NB_USER=$NB_USER 
