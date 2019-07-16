@@ -15,9 +15,9 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
 # Adding non-priviledged uses (adding them to sudo group - optional)
-RUN groupmod -g $GID users
+RUN groupadd -g $GID john-group
 
-RUN useradd -N -l -u $UID -g users -G sudo john && \
+RUN useradd -N -l -u $UID -g john-group -G sudo john && \
     echo "$UID:pass" | chpasswd && \
 
 # Copying data and code
